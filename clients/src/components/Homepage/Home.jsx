@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import './Home.css';
-import image from '../../assets/test.jpg';
-import { categoryCount, getAllBlogs, getBlogById } from '../../apis/Blogs';
+import {
+  categoryCount,
+  getPopularBlogs,
+  getRecentBlogs,
+  getBlogById,
+} from '../../apis/Blogs';
 import { usersCount, blogsCount, getUserById } from '../../apis/users';
 import {
   TiSocialFacebook,
@@ -19,6 +23,7 @@ import Navbar from '../Navbar/Navbar';
 const url = 'http://localhost:8000';
 
 export const user = [];
+
 function Blog(props) {
   const [blog1, setBlog1] = useState('');
   const [blog2, setBlog2] = useState('');
@@ -194,12 +199,13 @@ function Blog(props) {
     </>
   );
 }
-function ShortBlogs(props) {
+
+function PopularBlogs(props) {
   const [blogs, setBlogs] = useState([]);
 
   const getBlogs = async () => {
-    const res = await getAllBlogs();
-    setBlogs(res.data);
+    const res = await getPopularBlogs();
+    setBlogs([...res.data]);
   };
   useEffect(() => {
     getBlogs();
@@ -274,6 +280,7 @@ function ShortBlogs(props) {
     </>
   );
 }
+
 function PopularAuthors(props) {
   const [farhanProf, setFarhanProf] = useState('');
   const farhan = async () => {
@@ -313,6 +320,7 @@ function PopularAuthors(props) {
     </>
   );
 }
+
 export function RightSection() {
   const [totalUsers, setTotalUsers] = useState('');
   const [totalBlogs, setTotalBlogs] = useState('');
@@ -455,8 +463,9 @@ export function RightSection() {
     </>
   );
 }
+
 function Home() {
-  const [allBlogs, setAllBlogs] = useState([]);
+  const [recentBlogs, setRecentBlogs] = useState([]);
   const [loading, setLoading] = useState(false);
   const { loginData, setLoginData } = useContext(LoginContext);
   const pageRoute = useNavigate();
@@ -470,11 +479,11 @@ function Home() {
     let res = await blogsCount();
     setTotalBlogs(res.data.count);
   };
-  let i = 0;
+
   const getBlogs = async () => {
     setLoading(true);
-    const res = await getAllBlogs();
-    setAllBlogs(res.data);
+    const res = await getRecentBlogs();
+    setRecentBlogs(res.data);
     setLoading(false);
   };
   const homeValid = async () => {
@@ -492,12 +501,14 @@ function Home() {
       user.push(res.data.user);
     }
   };
+
   useEffect(() => {
     homeValid();
     getBlogs();
     userCount();
     blogCount();
   }, []);
+
   return (
     <>
       <Navbar />
@@ -523,18 +534,11 @@ function Home() {
             Week
           </h3>
           <div className='featured-blogs'>
-            <Blog
-              category='Travel'
-              title='Set Video Playback Speed With Javascript'
-              headerImg={image}
-              authorImg={image}
-              publishdate='02 December 2022'
-              readtime='3 min Read'
-              intro='Did you come here for something in particular or just general Riker-bashing? And blowing into'
-            />
+            <Blog />
             {/* <Blog category="Travel" title="Set Video Playback Speed With Javascript" headerImg=" " authorImg=" " publishdate="02 December 2022" readtime="3 min Read" intro="Did you come here for something in particular or just general Riker-bashing? And blowing into" /> */}
           </div>
         </section>
+
         <section className='right-section'>
           <div className='right-blog'>
             <h3 className='featured'>
@@ -542,9 +546,7 @@ function Home() {
               &nbsp;Posted
             </h3>
             <div className='scroll'>
-              {/* {/* <ShortBlogs shortcategory="Travel" authorImg={image} title="Design is the Mix of emotions" publishdate="23 December 2022" readtime="3 min Read" intro="Did you come here for something in particular or just general Riker-bashing? And blowing into maximum warp" /> */}
-              {/* shortcategory="Travel" authorImg=" " title="Design is the Mix of emotions" publishdate="23 December 2022" readtime="3 min Read" intro="Did you come here for something in particular or just general Riker-bashing? And blowing into maximum warp" /> */}
-              <ShortBlogs />
+              <PopularBlogs />
             </div>
           </div>
         </section>
@@ -555,7 +557,7 @@ function Home() {
             <span className='backgroundColor'>&nbsp;Recently </span>&nbsp;Posted
           </h3>
           <div className='recent-blogs'>
-            {allBlogs.map((e, index) => {
+            {recentBlogs.map((e, index) => {
               return (
                 <a href={`/blog/${e._id}`}>
                   <div key={e._id} className='blog-card'>

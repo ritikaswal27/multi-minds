@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import image from '../../assets/test.jpg';
 import './Blog.css';
 import { BsBookmarks, BsLink45Deg, BsFillBookmarksFill } from 'react-icons/bs';
 import {

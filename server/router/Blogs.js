@@ -51,21 +51,83 @@ router.post('/addBlog', async (req, res) => {
 });
 router.get('/blogs', async (req, res) => {
   try {
-    await Blog.find({}, (err, e) => {
-      if (err) console.log(err);
-      res.json(e);
-    });
+    let blogs = await Blog.find({});
+    return res.json(blogs);
   } catch (error) {
     console.log(error);
   }
 });
-router.get('/blog/:id', async (req, res) => {
-  const { id } = req.params;
+
+router.get('/recentBlogs', async (req, res) => {
   try {
-    const data = await Blog.findById(id).exec();
-    return res.json({ message: data });
+    let recentBlogs = await Blog.find({})
+      .sort({ createdAt: -1 })
+      .limit(8)
+      .exec();
+    return res.json(recentBlogs);
   } catch (error) {
     console.log(error);
+  }
+});
+
+router.get('/getPopularBlogs', async (req, res) => {
+  try {
+    let popularBlogs = await Blog.aggregate([
+      {
+        $addFields: {
+          score: {
+            $add: [
+              '$views',
+              { $multiply: [2, { $size: '$likes' }] },
+              { $multiply: [3, { $size: '$comments' }] },
+            ],
+          },
+        },
+      },
+      { $sort: { score: -1 } },
+      { $limit: 5 },
+    ]).exec();
+    return res.json(popularBlogs);
+  } catch (error) {
+    console.log('Error fetching popular blogs:', error);
+    return;
+  }
+});
+
+// router.get('/blog/:id', async (req, res) => {
+//   const { id } = req.params;
+//   try {
+//     const data = await Blog.findById(id).exec();
+//     data.views += 1;
+//     await data.save();
+
+//     return res.json({ message: data });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
+
+router.get('/blog/:id', async (req, res) => {
+  try {
+    const blogId = req.params.id;
+    const blog = await Blog.findById(blogId).exec();
+    if (!blog) {
+      return res.status(400).send('Blog not found');
+    }
+    if (!req.cookies[`viewed_${blogId}`]) {
+      blog.views += 1;
+      await blog.save();
+
+      res.cookie(`viewed_${blogId}`, true, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        secure: true,
+      });
+    }
+
+    return res.json({ message: blog });
+  } catch (error) {
+    res.status(500).send('Server Error');
   }
 });
 router.patch('/update/blog/:id', async (req, res) => {

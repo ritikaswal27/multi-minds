@@ -1,4 +1,5 @@
 import axios from 'axios';
+axios.defaults.withCredentials = true;
 const url = 'http://localhost:8000';
 export const postBlog = async (body) => {
   try {
@@ -14,6 +15,26 @@ export const getAllBlogs = async () => {
     console.log(error);
   }
 };
+
+export const getRecentBlogs = async () => {
+  try {
+    let recentBlogs = await axios.get(`${url}/recentBlogs`);
+    return recentBlogs;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getPopularBlogs = async () => {
+  try {
+    let popularBlogs = await axios.get(`${url}/getPopularBlogs`);
+    console.log(popularBlogs);
+    return popularBlogs;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const getBlogById = async (id) => {
   try {
     return await axios.get(`${url}/blog/${id}`);

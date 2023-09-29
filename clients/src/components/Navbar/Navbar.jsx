@@ -6,7 +6,6 @@ import { SidebarData } from './SidebarData';
 import './Navbar.css';
 import { IconContext } from 'react-icons';
 import { ImCross } from 'react-icons/im';
-import image from '../../assets/test.jpg';
 import { LoginContext } from '../../contextProvider/Context';
 import logo from '../../assets/travelbrain-logo.svg';
 import defaultimage from '../../assets/defaultprofile.png';

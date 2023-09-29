@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const url = 'mongodb://localhost:27017';
+const Blog = require('../models/Blog');
 const mongoConnection = () => {
   try {
     mongoose.connect(url, { useUnifiedTopology: true, useNewUrlParser: true });
