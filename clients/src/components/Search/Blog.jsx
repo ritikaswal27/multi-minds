@@ -10,7 +10,6 @@ function Blog(props) {
 
   const searchForBlogs = async () => {
     const res = await searchBlog(search);
-    console.log(res);
     setBlogs(res.data);
     // console.log(blogs.filter((e) => e.title.toLowerCase().includes(search)));
   };

@@ -30,26 +30,27 @@ function Author(props) {
           Try more general keywords.
         </p>
       </div>
-      {author.map((e) => {
-        return (
-          <>
-            <a href={`/profile/${e._id}`}>
-              <div className='following-container mt-3'>
-                <div className='imageFlex'>
-                  <img className='searchProfile' src={e.profilePic} />
-                  <div className='fflex'>
-                    <p className='searchUsername'>{e.username}</p>
-                    <p className='searchFullname'>{e.fullname}</p>
+      {search &&
+        author.map((e) => {
+          return (
+            <>
+              <a href={`/profile/${e._id}`}>
+                <div className='following-container mt-3'>
+                  <div className='imageFlex'>
+                    <img className='searchProfile' src={e.profilePic} />
+                    <div className='fflex'>
+                      <p className='searchUsername'>{e.username}</p>
+                      <p className='searchFullname'>{e.fullname}</p>
+                    </div>
                   </div>
+                  <a href={`/profile/${e._id}`}>
+                    <button className='searchBtn'>View</button>
+                  </a>
                 </div>
-                <a href={`/profile/${e._id}`}>
-                  <button className='searchBtn'>View</button>
-                </a>
-              </div>
-            </a>
-          </>
-        );
-      })}
+              </a>
+            </>
+          );
+        })}
     </>
   );
 }

@@ -5,17 +5,12 @@ import './Search.css';
 import Stack from '@mui/material/Stack';
 import LinearProgress from '@mui/material/LinearProgress';
 import Navbar from '../Navbar/Navbar';
-import { searchAuthor, searchBlog, searchCategory } from '../../apis/Blogs';
 import { useEffect } from 'react';
 import Author from './Author';
 import Category from './Category';
 import Blog from './Blog';
+import useDebouncedValue from './DebouncedFunction';
 
-const defaultValue = {
-  Blog: '',
-  Author: '',
-  Category: '',
-};
 function Search(props) {
   // const [active, setActive] = useState(false)
   const [blogActive, setBlogActive] = useState(false);
@@ -27,7 +22,6 @@ function Search(props) {
   const [categoryQuery, setCategoryQuery] = useState('');
 
   const act = async (e) => {
-    console.log(e.target.id);
     setBlogActive(true);
     if (e.target.id === 'blogs') {
       setBlogActive(true);
@@ -49,6 +43,14 @@ function Search(props) {
   useEffect(() => {
     setBlogActive(true);
   }, []);
+
+  const query = blogActive
+    ? blogQuery
+    : categoryActive
+    ? categoryQuery
+    : authorQuery;
+  const debouncedQuery = useDebouncedValue(query, 400);
+
   return (
     <>
       <Navbar />
@@ -59,6 +61,7 @@ function Search(props) {
       >
         <LinearProgress style={{ width: '100%' }} color='success' />
       </Stack>
+
       <div className='container search-page'>
         <form
           method='get'
@@ -153,7 +156,7 @@ function Search(props) {
               style={{ display: blogActive ? 'block' : 'none' }}
               className='blog-results'
             >
-              <Blog search={blogQuery} />
+              <Blog search={debouncedQuery} />
             </div>
           )}
         </div>
@@ -162,7 +165,7 @@ function Search(props) {
             style={{ display: authorActive ? 'block' : 'none' }}
             className='author-results'
           >
-            <Author search={authorQuery} />
+            <Author search={debouncedQuery} />
           </div>
         )}
 
@@ -171,7 +174,7 @@ function Search(props) {
             style={{ display: categoryActive ? 'block' : 'none' }}
             className='category-results'
           >
-            <Category search={categoryQuery} />
+            <Category search={debouncedQuery} />
           </div>
         )}
       </div>
