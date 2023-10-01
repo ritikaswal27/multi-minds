@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const url = 'mongodb://localhost:27017';
+const url = process.env.URI;
 const Blog = require('../models/Blog');
 const mongoConnection = () => {
   try {
